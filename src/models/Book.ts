@@ -1,10 +1,15 @@
 export class Book {
-    private bookId: number;
+    private bookId?: number;
     private title: string;
     private ISBN: number;
     private nrCopies: number;
 
-    constructor(bookId: number, title: string, ISBN: number, nrCopies: number) {
+    constructor(
+        bookId: number | undefined,
+        title: string,
+        ISBN: number,
+        nrCopies: number,
+    ) {
         this.bookId = bookId;
         this.title = title;
         this.ISBN = ISBN;
