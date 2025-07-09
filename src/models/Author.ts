@@ -1,11 +1,11 @@
 export class Author {
     private authorId: number;
-    private firsname: string;
+    private firstname: string;
     private lastname: string;
 
     constructor(authorId: number, firstname: string, lastname: string) {
         this.authorId = authorId;
-        this.firsname = firstname;
+        this.firstname = firstname;
         this.lastname = lastname;
     }
 
@@ -18,11 +18,11 @@ export class Author {
     }
 
     get getFirstname(): string {
-        return this.firsname;
+        return this.firstname;
     }
 
     set setFirstname(value: string) {
-        this.firsname = value;
+        this.firstname = value;
     }
 
     get getLastname(): string {
