@@ -3,8 +3,8 @@ import 'dotenv/config';
 import ConnectionPool from 'tedious-connection-pool';
 import healthcheckRoutes from './controllers/healthcheckController';
 import bookRoutes from './controllers/bookController';
+import authorRoutes from './controllers/authorController'
 import { Request } from 'tedious';
-import { Book } from './models/Book';
 const port = process.env['PORT'] || 3000;
 
 const app = express();
@@ -27,8 +27,6 @@ const config = {
     trustServerCertificate: true,
     server: 'localhost',
 };
-
-
 
 //create the pool
 export const pool = new ConnectionPool(poolConfig, config);
@@ -69,3 +67,4 @@ pool.acquire(function (err, connection) {
  */
 app.use('/healthcheck', healthcheckRoutes);
 app.use('/books', bookRoutes);
+app.use('/authors', authorRoutes);

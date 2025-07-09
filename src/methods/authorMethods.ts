@@ -1,33 +1,33 @@
-import { Book } from '../models/Book';
+import { Author } from '../models/Author';
 import { Request, TYPES } from 'tedious';
 import { pool } from '../app';
 
-export function getBooks(): Promise<Book[]> {
+export function getAuthors(): Promise<Author[]> {
     return new Promise((resolve, reject) => {
         pool.acquire((err, connection) => {
             if (err) {
                 return reject(err);
             }
 
-            const books: Book[] = [];
-            const sql = 'SELECT bookId, title, ISBN, nrCopies FROM Bookish.dbo.Books';
+            const authors: Author[] = [];
+            const sql =
+                'SELECT authorId, firstname, lastname FROM Bookish.dbo.Authors';
 
             const request = new Request(sql, (err) => {
                 connection.release();
                 if (err) {
                     return reject(err);
                 }
-                resolve(books);
+                resolve(authors);
             });
 
             request.on('row', (columns) => {
-                const book = new Book(
+                const author = new Author(
                     columns[0].value,
                     columns[1].value,
                     columns[2].value,
-                    columns[3].value
                 );
-                books.push(book);
+                authors.push(author);
             });
 
             connection.execSql(request);
@@ -35,10 +35,11 @@ export function getBooks(): Promise<Book[]> {
     });
 }
 
-export function getbookbyId(id: number): Promise<Book | null> {
+export function getauthorbyId(id: number): Promise<Author | null> {
     return new Promise((resolve, reject) => {
         pool.acquire((err, connection) => {
-            const sql = 'SELECT * FROM Bookish.dbo.Books WHERE bookId = @id';
+            const sql =
+                'SELECT * FROM Bookish.dbo.Authors WHERE authorId = @id';
             const request = new Request(sql, (err) => {
                 connection.release();
                 if (err) {
@@ -47,14 +48,13 @@ export function getbookbyId(id: number): Promise<Book | null> {
             });
 
             request.on('row', (columns) => {
-                const book = new Book(
+                const author = new Author(
                     columns[0].value, // id
-                    columns[1].value, // name
-                    columns[2].value, // isbn
-                    columns[3].value, // nrcopies
+                    columns[1].value, // firstname
+                    columns[2].value, // lastname
                 );
 
-                resolve(book);
+                resolve(author);
             });
             request.addParameter('id', TYPES.Int, id);
             connection.execSql(request);
@@ -62,11 +62,11 @@ export function getbookbyId(id: number): Promise<Book | null> {
     });
 }
 
-export function createBook(book: Book): Promise<void> {
+export function createAuthor(author: Author): Promise<void> {
     return new Promise((resolve, reject) => {
         pool.acquire((err, connection) => {
             const sql = `
-                INSERT INTO Bookish.dbo.Books (title, ISBN, nrCopies) VALUES (@title, @ISBN, @nrCopies)
+                INSERT INTO Bookish.dbo.Authors (firstname, lastname) VALUES (@firstname, @lastname)
             `;
             const request = new Request(sql, (err) => {
                 connection.release();
@@ -77,21 +77,24 @@ export function createBook(book: Book): Promise<void> {
                 }
             });
 
-            request.addParameter('title', TYPES.VarChar, book.getTitle);
-            request.addParameter('ISBN', TYPES.BigInt, book.getISBN);
-            request.addParameter('nrCopies', TYPES.Int, book.getNrCopies);
+            request.addParameter(
+                'firstname',
+                TYPES.VarChar,
+                author.getFirstname,
+            );
+            request.addParameter('lastname', TYPES.VarChar, author.getLastname);
             connection.execSql(request);
         });
     });
 }
 
-export function updateBook(book: Book): Promise<void> {
+export function updateAuthor(author: Author): Promise<void> {
     return new Promise((resolve, reject) => {
         pool.acquire((err, connection) => {
             const sql = `
-                UPDATE Bookish.dbo.Books
-                SET title = @title, ISBN = @ISBN, nrCopies = @nrCopies
-                WHERE bookId = @id
+                UPDATE Bookish.dbo.Authors
+                SET firstname = @firstname, lastname = @lastname
+                WHERE authorId = @id
             `;
             const request = new Request(sql, (err) => {
                 connection.release();
@@ -101,21 +104,24 @@ export function updateBook(book: Book): Promise<void> {
                     resolve();
                 }
             });
-            request.addParameter('id', TYPES.Int, book.getBookId);
-            request.addParameter('title', TYPES.VarChar, book.getTitle);
-            request.addParameter('ISBN', TYPES.BigInt, book.getISBN);
-            request.addParameter('nrCopies', TYPES.Int, book.getNrCopies);
+            request.addParameter('id', TYPES.Int, author.getAuthorId);
+            request.addParameter(
+                'firstname',
+                TYPES.VarChar,
+                author.getFirstname,
+            );
+            request.addParameter('lastname', TYPES.VarChar, author.getLastname);
             connection.execSql(request);
         });
     });
 }
 
-export function deleteBook(id: number): Promise<void> {
+export function deleteAuthor(id: number): Promise<void> {
     return new Promise((resolve, reject) => {
         pool.acquire((err, connection) => {
             const sql = `
-                DELETE FROM Bookish.dbo.Books
-                WHERE bookId = @id
+                DELETE FROM Bookish.dbo.Authors
+                WHERE authorId = @id
             `;
             const request = new Request(sql, (err) => {
                 connection.release();
@@ -130,6 +136,3 @@ export function deleteBook(id: number): Promise<void> {
         });
     });
 }
-
-
-

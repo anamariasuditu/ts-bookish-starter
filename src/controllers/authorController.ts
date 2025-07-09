@@ -1,24 +1,30 @@
 import { Router, Request, Response } from 'express';
-import { getbookbyId, getBooks, createBook, updateBook, deleteBook } from '../methods/bookMethods';
-import { Book } from '../models/Book';
-class BookController {
+import {
+    getauthorbyId,
+    getAuthors,
+    createAuthor,
+    updateAuthor,
+    deleteAuthor,
+} from '../methods/authorMethods';
+import { Author } from '../models/Author';
+class AuthorController {
     router: Router;
 
     constructor() {
         this.router = Router();
-        this.router.get('/:id', this.getBook.bind(this));
-        this.router.get('/', this.getAllBooks.bind(this));
-        this.router.post('/create', this.createbook.bind(this));
-        this.router.put('/:id/update', this.updatebook.bind(this));
-        this.router.delete('/:id/delete', this.deletebook.bind(this));
+        this.router.get('/:id', this.getAuthor.bind(this));
+        this.router.get('/', this.getAllAuthors.bind(this));
+        this.router.post('/create', this.createauthor.bind(this));
+        this.router.put('/:id/update', this.updateauthor.bind(this));
+        this.router.delete('/:id/delete', this.deleteauthor.bind(this));
     }
 
-    async getBook(req: Request, res: Response) {
+    async getAuthor(req: Request, res: Response) {
         const id = parseInt(req.params.id);
         try {
-            const book = await getbookbyId(id);
-            if (book) {
-                return res.status(200).json(book);
+            const author = await getauthorbyId(id);
+            if (author) {
+                return res.status(200).json(author);
             } else res.status(404).json({ message: 'Book not found' });
         } catch (error) {
             console.log(error);
@@ -29,11 +35,11 @@ class BookController {
         }
     }
 
-    async getAllBooks(req: Request, res: Response) {
+    async getAllAuthors(req: Request, res: Response) {
         try {
-            const book = await getBooks();
-            if (book) {
-                return res.status(200).json(book);
+            const author = await getAuthors();
+            if (author) {
+                return res.status(200).json(author);
             } else res.status(404).json({ message: 'Book not found' });
         } catch (error) {
             return res.status(500).json({
@@ -43,12 +49,12 @@ class BookController {
         }
     }
 
-    async createbook(req: Request, res: Response) {
-        const { title, ISBN, nrCopies } = req.body;
-        const book = new Book(undefined, title, ISBN, nrCopies);
+    async createauthor(req: Request, res: Response) {
+        const { firstname, lastname } = req.body;
+        const author = new Author(undefined, firstname, lastname);
         try {
-            await createBook(book);
-            return res.status(200).json(book);
+            await createAuthor(author);
+            return res.status(200).json(author);
         } catch (error) {
             console.log(error);
             return res.status(500).json({
@@ -58,13 +64,13 @@ class BookController {
         }
     }
 
-    async updatebook(req: Request, res: Response) {
+    async updateauthor(req: Request, res: Response) {
         const id = parseInt(req.params.id);
-        const { title, ISBN, nrCopies } = req.body;
-        const book = new Book(id, title, ISBN, nrCopies);
+        const { firstname, lastname } = req.body;
+        const author = new Author(id, firstname, lastname);
         try {
-            await updateBook(book);
-            return res.status(200).json(book);
+            await updateAuthor(author);
+            return res.status(200).json(author);
         } catch (error) {
             console.log(error);
             return res.status(500).json({
@@ -74,11 +80,11 @@ class BookController {
         }
     }
 
-    async deletebook(req: Request, res: Response) {
+    async deleteauthor(req: Request, res: Response) {
         const id = parseInt(req.params.id);
         try {
-            const book = await deleteBook(id);
-            return res.status(200).json(book);
+            const author = await deleteAuthor(id);
+            return res.status(200).json(author);
         } catch (error) {
             console.log(error);
             return res.status(500).json({
@@ -89,4 +95,4 @@ class BookController {
     }
 }
 
-export default new BookController().router;
+export default new AuthorController().router;

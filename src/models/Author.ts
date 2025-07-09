@@ -1,9 +1,13 @@
 export class Author {
-    private authorId: number;
+    private authorId?: number;
     private firstname: string;
     private lastname: string;
 
-    constructor(authorId: number, firstname: string, lastname: string) {
+    constructor(
+        authorId: number | undefined,
+        firstname: string,
+        lastname: string,
+    ) {
         this.authorId = authorId;
         this.firstname = firstname;
         this.lastname = lastname;
